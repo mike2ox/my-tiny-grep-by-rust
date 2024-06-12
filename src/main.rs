@@ -6,13 +6,18 @@ fn main() {
 
     // dbg!(&args);
 
-    let target = &args[1]; // 찾고자 하는 문자열
-    let file_path = &args[2]; // 파일 경로
-
-    // println!("Searching for {}", query);
+    let (target, file_path) = parse_config(&args);
+    // println!("Searching for {}", target);
     // println!("In file {}", file_path);
 
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 
     println!("With text:\n{contents}");
+}
+
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let target = &args[1];
+    let file_path = &args[2];
+
+    (target, file_path)
 }
