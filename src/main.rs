@@ -6,7 +6,7 @@ fn main() {
 
     // dbg!(&args);
 
-    let config = parse_config(&args);
+    let config = Config::new(&args);
     // println!("Searching for {}", target);
     // println!("In file {}", file_path);
 
@@ -21,9 +21,11 @@ struct Config {
     file_path: String,
 }
 
-fn parse_config(args: &[String]) -> Config {
-    let target = args[1].clone();
-    let file_path = args[2].clone();
+impl Config {
+    fn new(args: &[String]) -> Config {
+        let target = args[1].clone();
+        let file_path = args[2].clone();
 
-    Config { target, file_path }
+        Config { target, file_path }
+    }
 }
