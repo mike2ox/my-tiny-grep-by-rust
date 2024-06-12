@@ -6,18 +6,24 @@ fn main() {
 
     // dbg!(&args);
 
-    let (target, file_path) = parse_config(&args);
+    let config = parse_config(&args);
     // println!("Searching for {}", target);
     // println!("In file {}", file_path);
 
-    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
+    let contents =
+        fs::read_to_string(config.file_path).expect("Should have been able to read the file");
 
     println!("With text:\n{contents}");
 }
 
-fn parse_config(args: &[String]) -> (&str, &str) {
-    let target = &args[1];
-    let file_path = &args[2];
+struct Config {
+    target: String,
+    file_path: String,
+}
 
-    (target, file_path)
+fn parse_config(args: &[String]) -> Config {
+    let target = args[1].clone();
+    let file_path = args[2].clone();
+
+    Config { target, file_path }
 }
