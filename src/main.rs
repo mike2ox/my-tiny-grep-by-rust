@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
 
@@ -17,12 +18,23 @@ fn main() {
     // println!("Searching for {}", target);
     // println!("In file {}", file_path);
 
-    let contents =
-        fs::read_to_string(config.file_path).expect("Should have been able to read the file");
-
-    println!("With text:\n{contents}");
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
 }
 
+// 파일을 읽어서 출력하는 함수(SoC)
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    // let contents =
+    //     fs::read_to_string(config.file_path).expect("Should have been able to read the file");
+    let contents = fs::read_to_string(config.file_path)?;
+    println!("With text:\n{contents}");
+    Ok(())
+}
+// 1. run()의 반환 타입이 ()에서 Result<(), Box<dyn Error>로 변경(Box는 트레이트 객체, dyn은 동적)
+// 2. ? 연산자를 사용해서 expect호출을 제거(panic!대신 호출하는 쪽에서 처리할 수 있도록 함수에서 직접 에러값을 반환)
+// 3. ()를 사용한다는건 run을 호출하여 side effect에 대해서만 처리하겠다는 표현
 struct Config {
     target: String,
     file_path: String,
