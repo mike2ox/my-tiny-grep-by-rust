@@ -20,6 +20,15 @@ rust 공식문서의 I/O 프로젝트
   - 에러 케이스별로 에러 메세지를 출력하는 것이 좋다.(3)
   - 에러 처리의 유지보수를 위해 한 곳에서 관리하는 것이 좋다.(4)
 
+## 초과 목표
+
+- Search 결과마다 라인넘버 출력하기 (-n, --line-number)
+- Search 결과의 일정 라인수를 추가로 출력하기 (-A, --after-context NUM)
+- Search 결과 이전의 일정 라인수를 추가로 출력하기 (-B, --before-context NUM)
+- Case sensitivity (-s, --case-sensitive)
+- ✅ Ignore case (-i, --ignore-case)
+- ✅ Search의 결과물들을 치환 (-r, --replace REPLACEMENT_TEXT)
+
 ## 궁금한 점
 
 - main 함수의 입력부에는 별도의 변수가 없는건가? (ex. c 언어의 argc, argv)
