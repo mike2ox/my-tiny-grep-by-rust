@@ -2,15 +2,26 @@ use dotenv::dotenv;
 use std::error::Error;
 use std::{env, fs};
 
-// 대소문자 구분하는 검색 함수
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+// 대소문자 구분안하고 의미상 일치하는지를 검색하는 함수
+pub fn search_case_insensitive<'a>(
+    query: &str,
+    contents: &'a str,
+    is_line_number: bool,
+) -> Vec<&'a str> {
     let _query = query.to_lowercase(); // 작업 추가 가능
     let mut results = Vec::new();
 
+    let mut line_number = 1;
+
     for line in contents.lines() {
         if line.to_lowercase().contains(&_query) {
-            results.push(line);
+            if is_line_number {
+                results.push(format!("{}: {}", line_number, line));
+            } else {
+                results.push(line);
+            }
         }
+        line_number += 1;
     }
 
     results
@@ -20,11 +31,13 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // let contents =
     //     fs::read_to_string(config.file_path).expect("Should have been able to read the file");
+
     let contents = fs::read_to_string(config.file_path)?;
-    let results = if config.ignore_case {
-        search_case_insensitive(&config.target, &contents)
+
+    let results = if config.ignore_case || !config.case_sensitive {
+        search_case_insensitive(&config.target, &contents, &config.line_number)
     } else {
-        search(&config.target, &contents)
+        search(&config.target, &contents, &config.line_number)
     };
 
     for line in results {
@@ -38,14 +51,33 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 pub struct Config {
     pub target: String,
     pub file_path: String,
+    pub line_number: bool,
+    pub case_sensitive: bool,
     pub ignore_case: bool,
+}
+
+enum Flag {
+    LineNumber,
+    IgnoreCase,
 }
 
 impl Config {
     // Result를 사용해서 성공시 Config, 실패시 &'static str(lifetime은 'static)를 갖는 Result를 반환
     pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
-        args.next();
+        args.next(); // 첫번째 인수는 프로그램 이름이므로 무시
+
         dotenv().ok();
+
+        // let flag = match args.next() {
+        //     Some(arg) => match arg.as_str() {
+        //         "-n" => Flag::LineNumber,
+        //         "--line-number" => Flag::LineNumber,
+        //         "-i" => Flag::IgnoreCase,
+        //         "--ignore-case" => Flag::IgnoreCase,
+        //         _ => return Err("Invalid flag"),
+        //     },
+        //     None => return Err("Didn't get a flag"),
+        // };
 
         let target = match args.next() {
             Some(arg) => arg,
@@ -58,11 +90,15 @@ impl Config {
         };
 
         let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let case_sensitive = env::var("CASE_SENSITIVE").is_ok();
+        let line_number = env::var("LINE_NUMBER").is_ok();
 
         Ok(Config {
             target,
             file_path,
             ignore_case,
+            case_sensitive,
+            line_number,
         })
     }
 }
