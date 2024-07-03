@@ -10,14 +10,14 @@ fn main() {
     // Result가 OK를 반환하면 unwrap가 동일한 동작을 함.
     let config = Config::build(&args).unwrap_or_else(|err| {
         // 여기는 클로저로서 err를 받아서 처리하는 부분
-        println!("Problem parsing arguments: {}", err);
+        eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
     // println!("Searching for {}", target);
     // println!("In file {}", file_path);
 
     if let Err(e) = my_tiny_grep_by_rust::run(config) {
-        println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
