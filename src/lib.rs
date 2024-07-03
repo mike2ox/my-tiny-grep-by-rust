@@ -1,3 +1,4 @@
+use dotenv::dotenv;
 use std::error::Error;
 use std::{env, fs};
 
@@ -46,6 +47,8 @@ impl Config {
         if args.len() < 3 {
             return Err("Not enough arguments");
         }
+
+        dotenv().ok();
 
         let target = args[1].clone();
         let file_path = args[2].clone();
