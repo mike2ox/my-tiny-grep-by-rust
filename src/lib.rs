@@ -57,7 +57,7 @@ impl Config {
             None => return Err("Didn't get a file path"),
         };
 
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let ignore_case = env::var("IGNORE_CASE").is_ok().to_string() == "true";
 
         Ok(Config {
             target,
